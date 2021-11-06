@@ -37,15 +37,24 @@ class DonorDetailsActivity : AppCompatActivity() {
         donorNameTextView.text = donorName
         donorEmailTextView.text = donorEmail
         donorPhoneNumberTextView.text = donorPhoneNumber
-        donorBloodGroupTextView.text = resources.getString(R.string.blood_group_info_donor_detail, donorBloodGroup)
-        numberOfBloodUnitsTextView.text = resources.getString(R.string.number_of_units_available, numberOfUnitsDonated)
+        donorBloodGroupTextView.text =
+            resources.getString(R.string.blood_group_info_donor_detail, donorBloodGroup)
+        numberOfBloodUnitsTextView.text =
+            resources.getString(R.string.number_of_units_available, numberOfUnitsDonated)
 
         makePhoneCallButton.setOnClickListener {
             // check for permission to make a phone call
-            if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.CALL_PHONE), 1)
-            }
-            else {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.CALL_PHONE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(android.Manifest.permission.CALL_PHONE),
+                    1
+                )
+            } else {
                 val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$donorPhoneNumber"))
                 startActivity(intent)
             }
