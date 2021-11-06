@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/item_home"
+        android:title="@string/home" />
+
+    <item
+        android:id="@+id/item_donate_blood"
+        android:title="@string/donate_blood" />
+
+    <item
+        android:id="@+id/item_find_donor"
+        android:title="@string/find_donor" />
+
+    <item
+        android:id="@+id/item_find_hospital"
+        android:title="@string/find_nearest_hospital" />
+
+    <item
+        android:id="@+id/item_logout"
+        android:title="@string/logout" />
+
+</menu>

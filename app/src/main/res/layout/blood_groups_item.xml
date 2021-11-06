@@ -1,0 +1,12 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/textView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="14dp"
+    android:textColor="@color/black"
+    android:textStyle="bold"
+    android:textSize="16sp"
+    tools:layout_editor_absoluteX="257dp"
+    tools:layout_editor_absoluteY="363dp"
+    tools:text="AB+" />

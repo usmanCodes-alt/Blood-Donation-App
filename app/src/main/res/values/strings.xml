@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">Blood Donation</string>
+    <string name="blood_donation_logo">Blood donation logo</string>
+    <string name="email_placeholder">Email</string>
+    <string name="password_placeholder">Password</string>
+    <string name="login_btn_text">Login</string>
+    <string name="don_t_have_an_account">Don\'t have an account? </string>
+    <string name="register">Create new Account</string>
+    <string name="full_name_hint">Full Name</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="create_new_account_btn_text">Create new Account</string>
+    <string name="please_wait">Please wait..</string>
+    <string name="open">open</string>
+    <string name="close">close</string>
+    <string name="donate_blood">Donate Blood</string>
+    <string name="find_donor">Find Donor</string>
+    <string name="find_nearest_hospital">Find Nearest Hospital</string>
+    <string name="logout">Logout</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="home">Home</string>
+    <string name="already_have_an_account">Already have an Account?</string>
+    <string name="login_into_existing_account">Login into Existing Account</string>
+    <string-array name="blood_groups">
+
+        <item name="a">A+</item>
+        <item name="a_negative">A-</item>
+        <item name="b_positive">B+</item>
+        <item name="b_negative">B-</item>
+        <item name="o_positive">O+</item>
+        <item name="o_negative">O-</item>
+        <item name="ab_positive">AB+</item>
+        <item name="ab_negative">AB-</item>
+
+    </string-array>
+    <string name="select_blood_group">Select Blood Group</string>
+    <string name="phone">Phone</string>
+    <string name="donate_blood_info">Advertisement would be set according to your blood group</string>
+    <string name="donate_blood_card_heading">Donate Blood</string>
+    <string name="donated_units">%1$d Unit(s)</string>
+    <string name="initially_donated_units">0 Unit(s)</string>
+    <string name="blood_group_information">You are donating blood group %1$s.</string>
+    <string name="donate_blood_confirm_button">Confirm Donation</string>
+    <string name="donor_card_view_units">%1$d Units</string>
+    <string name="call_this_person">Call this person</string>
+    <string name="blood_group_info_donor_detail">Blood Group: %1$s</string>
+    <string name="number_of_units_available">Number of Units available: %1$d</string>
+</resources>
