@@ -1,22 +1,36 @@
 package com.example.blooddonation
 
+import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.blooddonation.models.Users
 import com.example.blooddonation.utils.ProgressDialog
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import java.util.*
 
 class RegisterActivity : AppCompatActivity() {
 
     private lateinit var mAuth: FirebaseAuth
     private lateinit var database: DatabaseReference
+    private lateinit var resultLauncher: ActivityResultLauncher<Intent>
+
+    private lateinit var userCircularImage: ShapeableImageView
+    private var selectedImageUri: Uri? =
+        null       // if the user selects no image, the Uri should be null
+    private var firebaseImageUrl: String =
+        ""       // if the user selects no image, download url string should remain empty
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +49,7 @@ class RegisterActivity : AppCompatActivity() {
 
         var bloodGroup = ""
         val registerButton: Button = findViewById(R.id.register_button)
+        userCircularImage = findViewById(R.id.user_image)
         val nameEditText: EditText = findViewById(R.id.full_name_edit_text)
         val emailEditText: EditText = findViewById(R.id.email_edit_text)
         val phoneNumberEditText: EditText = findViewById(R.id.phone_number_edit_text)
@@ -54,14 +69,16 @@ class RegisterActivity : AppCompatActivity() {
             }
         })
 
-        loginIntoExistingAccountTextView.setOnClickListener(object : View.OnClickListener {
-            override fun onClick(v: View?) {
-                val intent: Intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                startActivity(intent)
-                finish()
-            }
-        })
+        loginIntoExistingAccountTextView.setOnClickListener {
+            val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+        }
+
+        userCircularImage.setOnClickListener {
+            selectImage()
+        }
 
         registerButton.setOnClickListener {
             if (nameEditText.text.toString().trim().isEmpty() || emailEditText.text.toString()
@@ -103,10 +120,44 @@ class RegisterActivity : AppCompatActivity() {
                         .show()
                     val firebaseUser: FirebaseUser = task.result!!.user!!
 
-                    /**
-                     * write user to firestore
-                     */
-                    writeUser(firebaseUser.uid, username, bloodGroup, phoneNumber, email, password)
+                    if (selectedImageUri != null) {
+                        // user has selected an image, store that to firebase storage
+                        val randomFileName = UUID.randomUUID().toString()
+                        val firebaseStorage =
+                            FirebaseStorage.getInstance().getReference("/images/$randomFileName")
+
+                        // get that image's download url to store in firebase database
+                        firebaseStorage.putFile(selectedImageUri!!).addOnSuccessListener {
+                            firebaseStorage.downloadUrl.addOnSuccessListener {
+                                firebaseImageUrl = it.toString()
+                                /**
+                                 * write user to firestore with image url
+                                 */
+                                writeUser(
+                                    firebaseUser.uid,
+                                    username,
+                                    bloodGroup,
+                                    phoneNumber,
+                                    email,
+                                    password,
+                                    firebaseImageUrl
+                                )
+                            }
+                        }
+                    } else {
+                        /**
+                         * write user to firestore without image
+                         */
+                        writeUser(
+                            firebaseUser.uid,
+                            username,
+                            bloodGroup,
+                            phoneNumber,
+                            email,
+                            password,
+                            ""
+                        )
+                    }
 
                     progressDialog.hide()
 
@@ -125,6 +176,24 @@ class RegisterActivity : AppCompatActivity() {
                 }
             }
         }
+
+        resultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK && result.data != null) {
+                    Log.d("Image select", "onCreate: called")
+                    val data: Intent = result.data ?: return@registerForActivityResult
+                    selectedImageUri = data.data!!
+                    userCircularImage.setImageURI(selectedImageUri)
+                }
+            }
+    }
+
+    private fun selectImage() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
+        resultLauncher.launch(Intent.createChooser(intent, "Select Picture"))
     }
 
     private fun writeUser(
@@ -133,9 +202,11 @@ class RegisterActivity : AppCompatActivity() {
         bloodGroup: String,
         phoneNumber: String,
         email: String,
-        password: String
+        password: String,
+        firebaseImageUrl: String
     ) {
-        val user = Users(username, bloodGroup, phoneNumber, email, password)
+        val user = Users(username, bloodGroup, phoneNumber, email, password, firebaseImageUrl)
+        Log.d("Register Activity", "writeUser: $user")
         database.child(userId).setValue(user)
     }
 }

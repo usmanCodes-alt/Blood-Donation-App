@@ -12,6 +12,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.bumptech.glide.Glide
 import com.example.blooddonation.fragments.DonateBloodFragment
 import com.example.blooddonation.fragments.FindDonorFragment
 import com.example.blooddonation.fragments.HomeFragment
@@ -20,6 +21,7 @@ import com.example.blooddonation.models.Donation
 import com.example.blooddonation.utils.ProgressDialog
 import com.example.blooddonation.viewmodels.DonationViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -51,14 +53,27 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        donationViewModel = ViewModelProvider(this).get(DonationViewModel::class.java)
         mAuth = FirebaseAuth.getInstance()
+        donationViewModel = ViewModelProvider(this).get(DonationViewModel::class.java)
         userDatabase = FirebaseDatabase.getInstance().getReference("users")
         donationsDatabase = FirebaseDatabase.getInstance().getReference("donations")
+
+        val user = mAuth.currentUser
+        if (user == null) {
+            //there is no user logged in
+            val intent = Intent(applicationContext, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
 
         navigationView = findViewById(R.id.navigation_view)
         val headerView: View = navigationView.getHeaderView(0)
         val navDrawerHeaderUsernameTextView: TextView = headerView.findViewById(R.id.username)
+        val navDrawerUserProfilePictureImageView: ShapeableImageView =
+            headerView.findViewById(R.id.user_image)
+
         drawerLayout =
             findViewById(R.id.drawer_layout)     // getting hold of container drawer layout
         toggleNavigationDrawer =
@@ -89,6 +104,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 email = snapshot.child("email").value.toString()
                 bloodGroup = snapshot.child("bloodGroup").value.toString()
                 phoneNumber = snapshot.child("phoneNumber").value.toString()
+                if (snapshot.child("firebaseImageUrl").value.toString().isNotBlank()) {
+                    Glide.with(this@MainActivity)
+                        .load(snapshot.child("firebaseImageUrl").value.toString())
+                        .centerCrop()
+                        .into(navDrawerUserProfilePictureImageView)
+                }
                 Log.d("On data get", "onDataChange: $username $email $bloodGroup $phoneNumber")
                 navDrawerHeaderUsernameTextView.text = username
                 progressDialog.hide()
@@ -116,19 +137,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     transaction.commit()
                 }.show()
         })
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        val user = mAuth.currentUser
-        if (user == null) {
-            //there is no user logged in
-            val intent = Intent(applicationContext, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            startActivity(intent)
-            finish()
-        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

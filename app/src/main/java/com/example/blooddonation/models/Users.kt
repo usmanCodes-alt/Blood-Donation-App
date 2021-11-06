@@ -5,5 +5,6 @@ data class Users(
     val bloodGroup: String,
     val phoneNumber: String,
     val email: String,
-    val password: String
+    val password: String,
+    val firebaseImageUrl: String
 )
