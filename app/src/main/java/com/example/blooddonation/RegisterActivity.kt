@@ -39,6 +39,9 @@ class RegisterActivity : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().getReference("users")
 
+        val actionBar = supportActionBar
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+
         val progressDialog = ProgressDialog.progressDialog(this)
 
         val languages = resources.getStringArray(R.array.blood_groups)
@@ -208,5 +211,10 @@ class RegisterActivity : AppCompatActivity() {
         val user = Users(username, bloodGroup, phoneNumber, email, password, firebaseImageUrl)
         Log.d("Register Activity", "writeUser: $user")
         database.child(userId).setValue(user)
+    }
+
+    override fun onNavigateUp(): Boolean {
+        onBackPressed()
+        return true
     }
 }

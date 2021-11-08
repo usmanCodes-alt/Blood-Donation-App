@@ -60,6 +60,7 @@ class FindDonorFragment : Fragment() {
         query.addListenerForSingleValueEvent(object: ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 progressDialog.hide()
+                progressDialog.dismiss()
             }
 
             override fun onCancelled(error: DatabaseError) {

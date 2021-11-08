@@ -57,6 +57,7 @@ class LoginActivity : AppCompatActivity() {
                     ).show()
 
                     progressDialog.hide()
+                    progressDialog.dismiss()
 
                     val intent = Intent(applicationContext, MainActivity::class.java)
                     intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -70,6 +71,7 @@ class LoginActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                     progressDialog.hide()
+                    progressDialog.dismiss()
                 }
             }
         }

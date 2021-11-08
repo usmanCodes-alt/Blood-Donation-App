@@ -47,4 +47,8 @@
     <string name="call_this_person">Call this person</string>
     <string name="blood_group_info_donor_detail">Blood Group: %1$s</string>
     <string name="number_of_units_available">Number of Units available: %1$d</string>
+
+    <!--Google maps API Key-->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCKJ_N8H8k59FnAS3KGgx2P8Pote4pVerU</string>
+
 </resources>
